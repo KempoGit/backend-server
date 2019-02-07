@@ -75,6 +75,7 @@ app.put('/:tipo/:id', (req, res, next) => {
     subirPorTipo(archivo, path, tipo, id, nombreArchivo, res);
 });
 
+// Acá agrego la funcion de mover archivo
 function moverElArchivo(archivo, path) {
     archivo.mv(path, err => {
         if (err) {
@@ -87,10 +88,12 @@ function moverElArchivo(archivo, path) {
     });
 }
 
+// Agrego los parametros necesarios
 function subirPorTipo(archivo, path, tipo, id, nombreArchivo, res) {
     if (tipo === 'usuarios') {
         Usuario.findById(id, (err, usuario) => {
 
+            // Acá verifico que el usuario existe
             if (!usuario) {
                 return res.status(400).json({
                     ok: true,
@@ -98,7 +101,7 @@ function subirPorTipo(archivo, path, tipo, id, nombreArchivo, res) {
                     errors: { message: 'El usuario no existe' }
                 });
             }
-
+            // Acá muevo el archivo
             moverElArchivo(archivo, path);
 
             var pathViejo = './uploads/usuarios/' + usuario.img;
