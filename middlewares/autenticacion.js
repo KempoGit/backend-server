@@ -5,9 +5,10 @@ var SEED = require('../config/config').SEED;
 
 
 // ==============================
-// Actualizar usuarios
+// Verifica token
 // ==============================
 exports.verificaToken = function(req, res, next) {
+
     var token = req.query.token;
 
     jwt.verify(token, SEED, (err, decoded) => {
@@ -20,9 +21,46 @@ exports.verificaToken = function(req, res, next) {
         }
         req.usuario = decoded.usuario;
         next();
-        // return res.status(200).json({
-        //     ok: true,
-        //     decoded: decoded
-        // });
     });
+}
+
+
+// ==============================
+// Verifica admin
+// ==============================
+exports.verificaAdmin = function(req, res, next) {
+
+    var usuario = req.usuario;
+
+    if (usuario.role === 'ADMIN_ROLE') {
+        next();
+        return;
+    } else {
+        return res.status(401).json({
+            ok: false,
+            mensaje: 'Token incorrecto',
+            errors: { mesagge: 'No, pibe' }
+        });
+    }
+}
+
+
+// ==============================
+// Verifica admin
+// ==============================
+exports.verificaAdmUsu = function(req, res, next) {
+
+    var usuario = req.usuario;
+    var id = req.params.id;
+
+    if (usuario.role === 'ADMIN_ROLE' || usuario._id === id) {
+        next();
+        return;
+    } else {
+        return res.status(401).json({
+            ok: false,
+            mensaje: 'Token incorrecto',
+            errors: { mesagge: 'No, pibe' }
+        });
+    }
 }
