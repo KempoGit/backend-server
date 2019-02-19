@@ -13,6 +13,22 @@ var CLIENT_ID = require('../config/config').CLIENT_ID;
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
 
+var mdAutenticacion = require('../middlewares/autenticacion');
+
+/// ============================
+/// Renovar Token
+/// ============================
+app.get('/renuevatoken', mdAutenticacion.verificaToken, (req, res) => {
+
+    var token = jwt.sign({ usuario: req.usuario }, SEED, { expiresIn: 14400 }); //4 horas
+
+    res.status(200).json({
+        ok: true,
+        token: token
+    });
+});
+
+
 /// ============================
 /// Autenticación Google
 /// ============================
@@ -67,7 +83,7 @@ app.post('/google', async(req, res) => {
                     errors: err
                 });
             } else {
-                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 86400 }); //24 horas
+                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 }); //4 horas
                 res.status(200).json({
                     ok: true,
                     usuario: usuarioDB,
@@ -87,7 +103,7 @@ app.post('/google', async(req, res) => {
             usuario.password = ':)';
 
             usuario.save((err, usuarioDB) => {
-                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 86400 }); //24 horas
+                var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 }); //4 horas
                 res.status(200).json({
                     ok: true,
                     usuario: usuarioDB,
@@ -134,7 +150,7 @@ app.post('/', (req, res) => {
 
         // Crear un token
         usuarioDB.password = ':)';
-        var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 86400 }); //24 horas
+        var token = jwt.sign({ usuario: usuarioDB }, SEED, { expiresIn: 14400 }); //4 horas
 
         res.status(200).json({
             ok: true,
